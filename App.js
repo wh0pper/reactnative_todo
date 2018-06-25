@@ -19,7 +19,7 @@ import {
 } from "react-native";
 
 const isAndroid = Platform.OS == "android";
-const viewPadding = 10;
+const viewPadding = 20;
 
 export default class TodoList extends Component {
   state = {
@@ -27,19 +27,15 @@ export default class TodoList extends Component {
     text: ""
   };
 
-  changeTextHandler = text => {
-    this.setState({ text: text });
-  };
-
   addTask = () => {
     let notEmpty = this.state.text.trim().length > 0;
-
+    console.log(this.state);
     if (notEmpty) {
       this.setState(
         prevState => {
           let { tasks, text } = prevState;
           return {
-            tasks: tasks.concat({ key: tasks.length, text: text }),
+            tasks: tasks.concat({ key: tasks.length.toString(), text: text }),
             text: ""
           };
         },
@@ -62,6 +58,7 @@ export default class TodoList extends Component {
   };
 
   componentDidMount() {
+    
     Keyboard.addListener(
       isAndroid ? "keyboardDidShow" : "keyboardWillShow",
       e => this.setState({ viewPadding: e.endCoordinates.height + viewPadding })
@@ -80,29 +77,37 @@ export default class TodoList extends Component {
       <View
         style={[styles.container, { paddingBottom: this.state.viewPadding }]}
       >
+        <Text>To-Do List</Text>
         <FlatList
           style={styles.list}
           data={this.state.tasks}
           renderItem={({ item, index }) =>
             <View>
-              <View style={styles.listItemCont}>
+              <View style={styles.listItemContainer}>
                 <Text style={styles.listItem}>
                   {item.text}
                 </Text>
-                <Button title="X" onPress={() => this.deleteTask(index)} />
+                <Button title="x" onPress={() => this.deleteTask(index)} />
               </View>
               <View style={styles.hr} />
             </View>}
         />
-        <TextInput
-          style={styles.textInput}
-          onChangeText={this.changeTextHandler}
-          onSubmitEditing={this.addTask}
-          value={this.state.text}
-          placeholder="Add Tasks"
-          returnKeyType="done"
-          returnKeyLabel="done"
-        />
+        <View style={styles.inputSection}>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={(text) => this.setState({text:text})}
+            onSubmitEditing={this.addTask}
+            value={this.state.text}
+            placeholder="Add Tasks"
+            returnKeyType="done"
+            returnKeyLabel="done"
+          />
+          <Button
+            style={styles.addTaskButton}
+            title="Add"
+            onPress={this.addTask}
+          />
+        </View>
       </View>
     );
   }
@@ -111,7 +116,7 @@ export default class TodoList extends Component {
 let Tasks = {
   convertToArrayOfObject(tasks, callback) {
     return callback(
-      tasks ? tasks.split("||").map((task, i) => ({ key: i, text: task })) : []
+      tasks ? tasks.split("||").map((task, i) => ({ key: i.toString(), text: task })) : []
     );
   },
   convertToStringWithSeparators(tasks) {
@@ -134,32 +139,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#F5FCFF",
     padding: viewPadding,
-    paddingTop: 20
+    paddingTop: 40
   },
   list: {
     width: "100%"
   },
   listItem: {
-    paddingTop: 2,
-    paddingBottom: 2,
-    fontSize: 18
+    // paddingTop: 2,
+    // paddingBottom: 2,
+    // fontSize: 18
   },
   hr: {
     height: 1,
     backgroundColor: "gray"
   },
-  listItemCont: {
+  listItemContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
   },
+  inputSection: {
+    flexDirection: "row"
+  },
   textInput: {
+    flex: 4,
     height: 40,
     paddingRight: 10,
     paddingLeft: 10,
     borderColor: "gray",
     borderWidth: isAndroid ? 0 : 1,
     width: "100%"
+  },
+  addTaskButton: {
+    flex: 1
   }
 });
 
