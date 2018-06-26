@@ -13,21 +13,20 @@ import TodoList from './List';
 export default class App extends Component {
   render() {
     return (
-      <TodoList/>
+      <RootStack/>
     )
   }
 }
 
-
-// const RootStack = createStackNavigator(
-//   {
-//     home: HomeScreen,
-//     list: TodoList
-//   },
-//   {
-//     initialRouteName: 'home'
-//   }
-// );
+const RootStack = createStackNavigator(
+  {
+    home: HomeScreen,
+    list: TodoList
+  },
+  {
+    initialRouteName: 'home'
+  }
+);
 
 
 AppRegistry.registerComponent("ToDo", () => App);
